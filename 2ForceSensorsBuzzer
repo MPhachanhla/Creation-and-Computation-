@@ -1,0 +1,71 @@
+//parts of this code were adapted from SIK Guide, Spark Fun, circuit 11
+//parts also adapted from Arduino Tutorials on EVERYTHING
+//strategy, write out steps I want it to take in plain english before starting code
+//alarm or sci fi sound from: http://forum.arduino.cc/index.php/topic,118757.0.html
+
+//problem: the sound does not stay on like alarm after being pressed...
+
+int forceSensor1 = A1; 
+int forceSensor2 = A0;
+
+int buzzerPin1 = 9; 
+
+int sensorState1; 
+int sensorState2;
+
+int sound;
+
+void setup()
+{
+  Serial.begin(9600); //open serial port to send data to computer at 9600 bits per second
+  pinMode(buzzerPin1, OUTPUT); 
+  pinMode(forceSensor1, INPUT); 
+  pinMode(forceSensor2, INPUT); 
+}
+
+void loop()
+{
+sensorState1 = analogRead(forceSensor1); //read the value from analog pin value between 0-1023 
+sensorState2 = analogRead(forceSensor2); 
+sound = map(sensorState1,0,1023,0,255);
+sound = map(sensorState2,0,1023,0,255);
+  
+if(sensorState1>500 || sensorState2>500)
+{
+analogWrite(buzzerPin1, sound);
+  tone(buzzerPin1,2200); // then buzz by going high
+    tone(buzzerPin1,1000);
+    tone(buzzerPin1,500);
+    tone(buzzerPin1,200);
+    tone(buzzerPin1,500);
+    delayMicroseconds(10000);    // waiting
+    noTone(buzzerPin1);  // going low
+    delayMicroseconds(10000);    // and waiting more
+    tone(buzzerPin1,2200); 
+    tone(buzzerPin1,1000);
+    delayMicroseconds(10000);    // waiting
+    noTone(buzzerPin1);  // going low
+    delayMicroseconds(10000);    // and waiting more
+    tone(buzzerPin1,100); 
+    delayMicroseconds(10000);    // waiting
+    noTone(buzzerPin1);  // going low
+    delayMicroseconds(10000);    // and waiting more
+    tone(buzzerPin1,100); 
+    delayMicroseconds(10000);    // waiting
+    noTone(buzzerPin1);  // going low
+}
+else 
+{
+ noTone(buzzerPin1); 
+}
+  {
+  int sensorState1 = analogRead(forceSensor1);
+  Serial.println(sensorState1); //print the state of the force sensor to help me decide values
+  delay(1); //delay in between reads for stability 
+  }
+  {
+  int sensorState2 = analogRead(forceSensor2);
+  Serial.println(sensorState2); //print the state of the force sensor to help me decide values
+  delay(1); //delay in between reads for stability 
+  }
+}
