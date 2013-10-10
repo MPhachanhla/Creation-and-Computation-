@@ -1,0 +1,142 @@
+int Mel1X = 0;
+int Laura1X = 0;
+
+void setup ()
+{
+size (700,200);
+smooth();
+background (74,9,188);
+strokeWeight (2);
+ellipseMode (RADIUS);
+}
+
+void draw()
+{ 
+   background (74,9,188);
+ 
+ if (keyPressed && (key == CODED)) { 
+   if (keyCode == LEFT){
+     Laura1X--;
+   }else if (keyCode == RIGHT){
+     Laura1X++; 
+   }
+ }
+ 
+ fill(255,230,0);
+ ellipse (650,200,150,150);
+ 
+ fill(255);
+ stroke(255);
+ ellipse (450,50,70,40);
+ ellipse (350,60,40,30);
+ 
+ pushMatrix();
+ translate(Laura1X,mouseY);
+ Mel();
+ popMatrix();
+ 
+ 
+ //this is the code for the VOID LAURA and MEL:
+ void Laura() 
+ {
+//HAIR and HEAD LAURA
+stroke(0);
+fill(72,37,28);
+ellipse(150,50,33,33);
+fill(247,242,67);//yellow
+ellipse(150,50,26,26); //head
+
+stroke(0);
+fill(255);//white LAURA
+ellipse(144,44,5,5);  //left eye
+fill(0);//black
+ellipse(144,44,0.5,0.5);//left pupil
+stroke (0);//black lash
+line(142,42,137,34); //lash 1
+line(139,39,134,37); //lash 2
+
+fill (255);//white LAURA
+ellipse(160,44,5,5);  //right eye
+fill(0);//black
+ellipse(160,44,0.5,0.5);//right pupil
+stroke (0);//black lash
+line(162,42,166,30); //lash 1
+line(165,39,169,34); //lash 2
+
+stroke(255,0,0);
+fill (247,242,67);
+arc(153, 58, 8, 8, 0, HALF_PI);
+//arc(53, 58, 8, 8, 0, HALF_PI);
+
+//NECK LAURA
+stroke(2,0,5);
+line(150,73,150,83);
+
+//BODY LAURA
+noStroke();
+fill(120);
+triangle(150,83,125,155,175,155);
+
+//ARMS LAURA
+stroke(247,242,67);//yellow
+line(147,90,135,109);
+stroke(247,242,67);//yellow
+line(153,90,174,109);
+
+//FEET LAURA
+stroke(0);
+line(148,155,148,198);
+stroke(0);
+line(154,155,154,198);
+ }
+ 
+void Mel()
+{
+   //hair Mel
+   fill(255,0,0);
+   stroke(255,0,0);
+   ellipse(50,40,32,32);
+   rect(17,40,65,70);
+    
+    //body Mel
+    fill(242,238,198);
+    stroke(0);
+    rect(45,165,5,40); //left leg
+    rect(55,165,5,40); //right leg
+    fill(0);
+    stroke(0);
+    triangle(50,65,10,165,90,165); //torso
+    fill(242,238,198);
+    stroke(242,238,198);
+    line(35,77,10,150); //right arm
+    line(65,77,90,150); //left arm
+    fill(0);
+    stroke(0);
+    arc(65,75,20,15,radians(0),PI); //right shoulder
+    arc(35,75,20,15,radians(0),PI); //left shoulder    
+    
+    //head Mel
+    stroke(0); //set stroke to black
+    fill(242,238,198);
+    ellipse(50,40,25,25); //face
+    fill(255);
+    ellipse(60,30,7,7); //right cornea
+    ellipse(40,30,7,7); //left cornea
+    fill(210); 
+    stroke(210); 
+    ellipse(60,30,3,3); //right iris
+    ellipse(40,30,3,3); //left iris
+    stroke(255,0,0);
+    fill(242,238,198);
+    arc(50,45,15,15,0, HALF_PI); //smirk  
+  }
+
+  
+pushMatrix();
+ translate(Laura1X,mouseY);
+ Laura();
+ popMatrix();
+}
+
+
+ 
