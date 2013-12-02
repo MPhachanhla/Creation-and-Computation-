@@ -1,0 +1,1013 @@
+/*
+Much of the bluetooth code was borrowed from the November 13th, Android Class examples, 
+namely the file: arduinoBluetooth from Nick. 
+
+Part of Adrdavan's code from his second project in order to make buttons for each of 
+the different letters and sounds as seen in the tab. 
+*/
+
+//the minim library is not compatible with Android, and upon further research, we found that apwidgets was compatible
+import apwidgets.*;
+APMediaPlayer player;
+
+//required for BT enabling on startup
+import android.content.Intent;
+import android.os.Bundle;
+import ketai.net.bluetooth.*;
+import ketai.ui.*;
+import ketai.net.*;
+
+import controlP5.*;
+
+ControlP5 cp5;
+
+//this is set up for the Bluetooth connection 
+//int bVal;
+int heart;
+PFont fontMy;
+boolean bReleased = true; //no permament sending when finger is tap
+
+KetaiBluetooth bt;
+boolean isConfiguring = true;
+byte info;
+KetaiList klist;
+ArrayList<String> devicesDiscovered = new ArrayList();
+
+//defining names for the image files used
+PImage imgA;
+PImage imgB;
+PImage imgC;
+PImage imgD;
+PImage imgE;
+PImage imgF;
+PImage imgG;
+PImage imgH;
+PImage imgI;
+PImage imgJ;
+PImage imgK;
+PImage imgL;
+PImage imgM;
+PImage imgN;
+PImage imgO;
+PImage imgP;
+PImage imgQ;
+PImage imgR;
+PImage imgS;
+PImage imgT;
+PImage imgU;
+PImage imgV;
+PImage imgW;
+PImage imgX;
+PImage imgY;
+PImage imgZ;
+PImage imgAll;
+//PImage imgBack;
+PImage imgLullaby;
+
+//the x and y lengths for the button size remained constant
+int buttonX=147;
+int buttonY=133;
+
+PFont font;
+
+//set the homepage as page zero
+int currentPage=0;
+
+//code to ensure bluetooth runs at start up
+void onCreate(Bundle savedInstanceState) {
+super.onCreate(savedInstanceState);
+bt = new KetaiBluetooth(this);
+}
+
+void onActivityResult(int requestCode, int resultCode, Intent data) {
+bt.onActivityResult(requestCode, resultCode, data);
+
+}
+
+void setup()
+{
+
+  //size of the Android Screen device (although this may be redundant since it will automatically adjust to full screen without a size)
+  //having the size displayed in the code, however did help when determining sizes of various buttons
+ size (800,1200);
+  smooth();
+//size(displayWidth, displayHeight);
+frameRate(10);
+orientation(PORTRAIT);
+//background(0);
+{
+     //start listening for BT connections
+bt.start();
+//at app start select device...
+isConfiguring = true;
+//font size
+//fontMy = createFont("SansSerif", 40);
+//textFont(fontMy);
+
+player = new APMediaPlayer(this);  
+
+//we had to move this code below around a bit in the tabs to determine where we wanted the light dimmer placed
+//this code is part of the bluetooth code borrowed from the Android class example as stated earlier 
+/*
+ cp5 = new ControlP5(this);
+   //PFont p = createFont("Arial",18); 
+  cp5.setControlFont(fontMy,30);
+  cp5.setColorLabel(color(255,0,0));
+ cp5.addSlider("heart")
+     .setPosition(720,400)
+    // .setSize(255,400)
+    .setSize(50,600)
+     .setRange(0,255)
+     //.setColorValueLabel(color(100))
+     //.setColorCaptionLabel(color(255))
+     .setDecimalPrecision(2) 
+     .setValue(100)
+     .setColorActive(color(255))
+     .setLabelVisible(false) 
+     .setColorForeground(color(255))
+    .setColorBackground(color(100));
+     ;
+     */
+}
+
+//loading all the images from the data folder 
+ imgA = loadImage("A.jpg");
+imgB = loadImage("B.jpg"); 
+imgC = loadImage("C.jpg");
+imgD = loadImage("D.jpg");
+imgE = loadImage("E.jpg");
+imgF = loadImage("F.jpg");
+  imgG = loadImage("G.jpg");
+  imgH = loadImage("H.jpg");
+  imgI = loadImage("I.jpg");
+  imgJ = loadImage("J.jpg");
+  imgK = loadImage("K.jpg");
+  imgL = loadImage("L.jpg");
+  imgM = loadImage("M.jpg");
+  imgN = loadImage("N.jpg");
+  imgO = loadImage("O.jpg");
+  imgP = loadImage("P.jpg");
+  imgQ = loadImage("Q.jpg");
+  imgR = loadImage("R.jpg");
+  imgS = loadImage("S.jpg");
+  imgT = loadImage("T.jpg");
+  imgU = loadImage("U.jpg");
+  imgV = loadImage("V.jpg");
+  imgW = loadImage("W.jpg");
+  imgX = loadImage("X.jpg");
+  imgY = loadImage("Y.jpg");
+  imgZ = loadImage("Z.jpg");
+  imgLullaby = loadImage("Lullaby.jpg");
+  imgAll = loadImage("AllLullaby.jpg");
+  
+//the images were set to start at the top left corner and then fill the rest of the screen 
+//when the images were initially photoshopped, they were created in the same proportions as that of the screen 
+image (imgA,0,0,width,height);
+image (imgB,0,0,width,height);
+image (imgC,0,0,width,height);
+image (imgD,0,0,width,height);
+image (imgE,0,0,width,height);
+image (imgF,0,0,width,height);
+image (imgG,0,0,width,height);
+image (imgH,0,0,width,height);
+image (imgI,0,0,width,height);
+image (imgJ,0,0,width,height);
+image (imgK,0,0,width,height);
+image (imgL,0,0,width,height);
+image (imgM,0,0,width,height);
+image (imgN,0,0,width,height);
+image (imgO,0,0,width,height);
+image (imgP,0,0,width,height);
+image (imgQ,0,0,width,height);
+image (imgR,0,0,width,height);
+image (imgS,0,0,width,height);
+image (imgT,0,0,width,height);
+image (imgU,0,0,width,height);
+image (imgV,0,0,width,height);
+image (imgW,0,0,width,height);
+image (imgX,0,0,width,height);
+image (imgY,0,0,width,height);
+image (imgZ,0,0,width,height);
+image (imgLullaby,0,0,width,height);
+image (imgAll,0,0,width,height);
+
+}
+
+void draw()
+
+{
+//at app start select device (More bluetooth)
+if (isConfiguring)
+{
+ArrayList<String> names;
+//background(78, 93, 75);
+klist = new KetaiList(this, bt.getPairedDeviceNames());
+isConfiguring = false;
+}
+else
+{
+//background(255);
+//fill(0);
+//text(info,100,500);
+
+//buttons to pull up each letter page from the home page 
+buttonA(93,88,buttonX,buttonY);
+buttonB(252,88,buttonX,buttonY);
+buttonC(387,88,buttonX,buttonY);
+buttonD(534,88,buttonX,buttonY);
+buttonE(93,238,buttonX,buttonY);
+buttonF(252,238,buttonX,buttonY);
+buttonG(417,238,buttonX,buttonY);
+buttonH(572,238,buttonX,buttonY);
+buttonI(93,387,buttonX,buttonY);
+buttonJ(252,387,buttonX,buttonY);
+buttonK(417,387,buttonX,buttonY);
+buttonL(572,387,buttonX,buttonY);
+buttonM(93,540,buttonX,buttonY);
+buttonN(252,540,buttonX,buttonY);
+buttonO(417,540,buttonX,buttonY);
+buttonP(572,540,buttonX,buttonY);
+buttonQ(93,685,buttonX,buttonY);
+buttonR(252,685,buttonX,buttonY);
+buttonS(417,685,buttonX,buttonY);
+buttonT(572,685,buttonX,buttonY);
+buttonU(93,838,buttonX,buttonY);
+buttonV(252,838,buttonX,buttonY);
+buttonW(417,838,buttonX,buttonY);
+buttonX(572,838,buttonX,buttonY);
+buttonY(93,990,buttonX,buttonY);
+buttonZ(252,990,buttonX,buttonY);
+
+buttonMain(700,1150,50,50);
+
+//the sound button was in the same location for each letter
+//each letter had this button setting only applicable for the corresponding letter page as part of the if statement
+buttonSound(40,50,250,250);
+
+buttonErase(20,1150,60,60);
+
+//this was not used
+buttonLullaby(417,990,buttonX,buttonY);
+
+buttonHeart(740,360,50,42);
+
+stroke(0);
+strokeWeight(2);
+//eraser
+line(20,1150,70,1150);
+line(20,1170,70,1170);
+line(20,1150,20,1170);
+line(70,1150,70,1170);
+line(70,1150,80,1160);
+line(80,1160,80,1180);
+line(70,1170,80,1180);
+line(30,1180,80,1180);
+line(20,1170,30,1180);
+
+//house
+line(700,1150,730,1130);
+line(730,1130,760,1150);
+line(700,1150,700,1190);
+line(760,1150,760,1190);
+line(700,1190,760,1190);
+line(700,1150,760,1150);
+
+//heart
+stroke(240,140,140);
+line(740,360,765,390);
+line(790,360,765,390);
+line(740,360,752,340);
+line(752,340,765,360);
+line(765,360,778,340);
+line(778,340,790,360);
+//arc(752,300,25,25,radians(180));
+//arc(778,300,25,25,radians(180));
+
+text("Home",710,1160,60,60);
+text("Erase",30,1155,60,60);
+//text("Blink",745,330,60,60);
+
+//code to be able to draw on the tablet, over the text
+stroke(255,0,0);
+ strokeWeight(15);
+ fill(225,0,0);
+ line(mouseX,mouseY,pmouseX,pmouseY);
+
+//sending of values to arduino when dimmer used, to signal LED brightness
+byte sendheart = (byte) heart;
+
+byte[] send = { '\n', sendheart};
+bt.broadcast(send);
+
+}
+}
+
+
+void onKetaiListSelection(KetaiList klist)
+{
+String selection = klist.getSelection();
+bt.connectToDeviceByName(selection);
+
+//dispose of list for now
+klist = null;
+
+
+
+}
+
+//////////////////////////////// New Tab: Erase
+
+//code to erase drawings but still stay on main page
+//nothing is really erased, the fresh corresponding image is just pulled up over the last one
+void buttonErase(int x, int y, int w, int h)
+{
+    if((mouseX>x) && (mouseX< x+w) && (mouseY >y) && (mouseY< y+h) && (mousePressed== true) && (currentPage == 1))
+        {
+        image (imgA,0,0,width,height);
+        }
+    
+    if((mouseX>x) && (mouseX< x+w) && (mouseY >y) && (mouseY< y+h) && (mousePressed== true) && (currentPage == 2))
+        {
+        image (imgB,0,0,width,height);
+        }
+
+    if((mouseX>x) && (mouseX< x+w) && (mouseY >y) && (mouseY< y+h) && (mousePressed== true) && (currentPage == 3))
+        {
+        image (imgC,0,0,width,height);
+        }
+        
+    if((mouseX>x) && (mouseX< x+w) && (mouseY >y) && (mouseY< y+h) && (mousePressed== true) && (currentPage == 4))
+        {
+        image (imgD,0,0,width,height);
+        }
+        
+    if((mouseX>x) && (mouseX< x+w) && (mouseY >y) && (mouseY< y+h) && (mousePressed== true) && (currentPage == 5))
+        {
+        image (imgE,0,0,width,height);
+        }
+        
+    if((mouseX>x) && (mouseX< x+w) && (mouseY >y) && (mouseY< y+h) && (mousePressed== true) && (currentPage == 6))
+        {
+        image (imgF,0,0,width,height);
+        }
+        
+    if((mouseX>x) && (mouseX< x+w) && (mouseY >y) && (mouseY< y+h) && (mousePressed== true) && (currentPage == 7))
+        {
+        image (imgG,0,0,width,height);
+        }
+        
+    if((mouseX>x) && (mouseX< x+w) && (mouseY >y) && (mouseY< y+h) && (mousePressed== true) && (currentPage == 8))
+        {
+        image (imgH,0,0,width,height);
+        }
+        
+    if((mouseX>x) && (mouseX< x+w) && (mouseY >y) && (mouseY< y+h) && (mousePressed== true) && (currentPage == 9))
+        {
+        image (imgI,0,0,width,height);
+        }
+        
+    if((mouseX>x) && (mouseX< x+w) && (mouseY >y) && (mouseY< y+h) && (mousePressed== true) && (currentPage == 10))
+        {
+        image (imgJ,0,0,width,height);
+        }
+        
+    if((mouseX>x) && (mouseX< x+w) && (mouseY >y) && (mouseY< y+h) && (mousePressed== true) && (currentPage == 11))
+        {
+        image (imgK,0,0,width,height);
+        }
+        
+    if((mouseX>x) && (mouseX< x+w) && (mouseY >y) && (mouseY< y+h) && (mousePressed== true) && (currentPage == 12))
+        {
+        image (imgL,0,0,width,height);
+        }
+        
+     if((mouseX>x) && (mouseX< x+w) && (mouseY >y) && (mouseY< y+h) && (mousePressed== true) && (currentPage == 13))
+        {
+        image (imgM,0,0,width,height);
+        }
+        
+     if((mouseX>x) && (mouseX< x+w) && (mouseY >y) && (mouseY< y+h) && (mousePressed== true) && (currentPage == 14))
+        {
+        image (imgN,0,0,width,height);
+        }
+        
+     if((mouseX>x) && (mouseX< x+w) && (mouseY >y) && (mouseY< y+h) && (mousePressed== true) && (currentPage == 15))
+        {
+        image (imgO,0,0,width,height);
+        }
+        
+     if((mouseX>x) && (mouseX< x+w) && (mouseY >y) && (mouseY< y+h) && (mousePressed== true) && (currentPage == 16))
+        {
+        image (imgP,0,0,width,height);
+        }
+        
+     if((mouseX>x) && (mouseX< x+w) && (mouseY >y) && (mouseY< y+h) && (mousePressed== true) && (currentPage == 17))
+        {
+        image (imgQ,0,0,width,height);
+        }
+        
+     if((mouseX>x) && (mouseX< x+w) && (mouseY >y) && (mouseY< y+h) && (mousePressed== true) && (currentPage == 18))
+        {
+        image (imgR,0,0,width,height);
+        }
+        
+     if((mouseX>x) && (mouseX< x+w) && (mouseY >y) && (mouseY< y+h) && (mousePressed== true) && (currentPage == 19))
+        {
+        image (imgS,0,0,width,height);
+        }
+        
+     if((mouseX>x) && (mouseX< x+w) && (mouseY >y) && (mouseY< y+h) && (mousePressed== true) && (currentPage == 20))
+        {
+        image (imgT,0,0,width,height);
+        }
+        
+     if((mouseX>x) && (mouseX< x+w) && (mouseY >y) && (mouseY< y+h) && (mousePressed== true) && (currentPage == 21))
+        {
+        image (imgU,0,0,width,height);
+        }
+        
+     if((mouseX>x) && (mouseX< x+w) && (mouseY >y) && (mouseY< y+h) && (mousePressed== true) && (currentPage == 22))
+        {
+        image (imgV,0,0,width,height);
+        }
+        
+     if((mouseX>x) && (mouseX< x+w) && (mouseY >y) && (mouseY< y+h) && (mousePressed== true) && (currentPage == 23))
+        {
+        image (imgW,0,0,width,height);
+        }
+        
+     if((mouseX>x) && (mouseX< x+w) && (mouseY >y) && (mouseY< y+h) && (mousePressed== true) && (currentPage == 24))
+        {
+        image (imgX,0,0,width,height);
+        }
+        
+     if((mouseX>x) && (mouseX< x+w) && (mouseY >y) && (mouseY< y+h) && (mousePressed== true) && (currentPage == 25))
+        {
+        image (imgY,0,0,width,height);
+        }
+        
+     if((mouseX>x) && (mouseX< x+w) && (mouseY >y) && (mouseY< y+h) && (mousePressed== true) && (currentPage == 26))
+        {
+        image (imgZ,0,0,width,height);
+        }
+        
+     if((mouseX>x) && (mouseX< x+w) && (mouseY >y) && (mouseY< y+h) && (mousePressed== true) && (currentPage == 27))
+        {
+        image (imgLullaby,0,0,width,height);
+        }
+}
+
+//////////////////////////////New Tab: Go to letters
+
+//buttons to go to letters
+//part of the if statement is set so that the button only works if you are on page zero, the main page
+
+
+void buttonA(int x, int y, int w, int h)
+{
+if((mouseX>x) && (mouseX< x+w) && (mouseY >y) && (mouseY< y+h) && (mousePressed== true) && (currentPage == 0))
+{
+image (imgA,0,0,width,height);
+currentPage = 1;
+}
+}
+
+void buttonB(int x, int y, int w, int h)
+{
+if((mouseX>x) && (mouseX< x+w) && (mouseY >y) && (mouseY< y+h) && (mousePressed== true) && (currentPage == 0))
+{
+image (imgB,0,0,width,height);
+currentPage = 2;
+}
+}
+
+void buttonC(int x, int y, int w, int h)
+{
+if((mouseX>x) && (mouseX< x+w) && (mouseY >y) && (mouseY< y+h) && (mousePressed== true) && (currentPage == 0))
+{
+image (imgC,0,0,width,height);
+currentPage = 3;
+}
+}
+
+void buttonD(int x, int y, int w, int h)
+{
+if((mouseX>x) && (mouseX< x+w) && (mouseY >y) && (mouseY< y+h) && (mousePressed== true) && (currentPage == 0))
+{
+image (imgD,0,0,width,height);
+currentPage = 4;
+}
+}
+
+void buttonE(int x, int y, int w, int h)
+{
+if((mouseX>x) && (mouseX< x+w) && (mouseY >y) && (mouseY< y+h) && (mousePressed== true) && (currentPage == 0))
+{
+image (imgE,0,0,width,height);
+currentPage = 5;
+}
+}
+
+void buttonF(int x, int y, int w, int h)
+{
+if((mouseX>x) && (mouseX< x+w) && (mouseY >y) && (mouseY< y+h) && (mousePressed== true) && (currentPage == 0))
+{
+image (imgF,0,0,width,height);
+currentPage = 6;
+}
+}
+
+void buttonG(int x, int y, int w, int h)
+{
+if((mouseX>x) && (mouseX< x+w) && (mouseY >y) && (mouseY< y+h) && (mousePressed== true) && (currentPage == 0))
+{
+image (imgG,0,0,width,height);
+currentPage = 7;
+}
+}
+
+void buttonH(int x, int y, int w, int h)
+{
+if((mouseX>x) && (mouseX< x+w) && (mouseY >y) && (mouseY< y+h) && (mousePressed== true) && (currentPage == 0))
+{
+image (imgH,0,0,width,height);
+currentPage = 8;
+}
+}
+
+void buttonI(int x, int y, int w, int h)
+{
+if((mouseX>x) && (mouseX< x+w) && (mouseY >y) && (mouseY< y+h) && (mousePressed== true) && (currentPage == 0))
+{
+image (imgI,0,0,width,height);
+currentPage = 9;
+}
+}
+
+void buttonJ(int x, int y, int w, int h)
+{
+if((mouseX>x) && (mouseX< x+w) && (mouseY >y) && (mouseY< y+h) && (mousePressed== true) && (currentPage == 0))
+{
+image (imgJ,0,0,width,height);
+currentPage = 10;
+}
+}
+
+void buttonK(int x, int y, int w, int h)
+{
+if((mouseX>x) && (mouseX< x+w) && (mouseY >y) && (mouseY< y+h) && (mousePressed== true) && (currentPage == 0))
+{
+image (imgK,0,0,width,height);
+currentPage = 11;
+}
+}
+
+void buttonL(int x, int y, int w, int h)
+{
+if((mouseX>x) && (mouseX< x+w) && (mouseY >y) && (mouseY< y+h) && (mousePressed== true) && (currentPage == 0))
+{
+image (imgL,0,0,width,height);
+currentPage = 12;
+}
+}
+
+void buttonM(int x, int y, int w, int h)
+{
+if((mouseX>x) && (mouseX< x+w) && (mouseY >y) && (mouseY< y+h) && (mousePressed== true) && (currentPage == 0))
+{
+image (imgM,0,0,width,height);
+currentPage = 13;
+}
+}
+
+void buttonN(int x, int y, int w, int h)
+{
+if((mouseX>x) && (mouseX< x+w) && (mouseY >y) && (mouseY< y+h) && (mousePressed== true) && (currentPage == 0))
+{
+image (imgN,0,0,width,height);
+currentPage = 14;
+}
+}
+
+void buttonO(int x, int y, int w, int h)
+{
+if((mouseX>x) && (mouseX< x+w) && (mouseY >y) && (mouseY< y+h) && (mousePressed== true) && (currentPage == 0))
+{
+image (imgO,0,0,width,height);
+currentPage = 15;
+}
+}
+
+void buttonP(int x, int y, int w, int h)
+{
+if((mouseX>x) && (mouseX< x+w) && (mouseY >y) && (mouseY< y+h) && (mousePressed== true) && (currentPage == 0))
+{
+image (imgP,0,0,width,height);
+currentPage = 16;
+}
+}
+
+void buttonQ(int x, int y, int w, int h)
+{
+if((mouseX>x) && (mouseX< x+w) && (mouseY >y) && (mouseY< y+h) && (mousePressed== true) && (currentPage == 0))
+{
+image (imgQ,0,0,width,height);
+currentPage = 17;
+}
+}
+
+void buttonR(int x, int y, int w, int h)
+{
+if((mouseX>x) && (mouseX< x+w) && (mouseY >y) && (mouseY< y+h) && (mousePressed== true) && (currentPage == 0))
+{
+image (imgR,0,0,width,height);
+
+currentPage = 18;}
+}
+
+void buttonS(int x, int y, int w, int h)
+{
+if((mouseX>x) && (mouseX< x+w) && (mouseY >y) && (mouseY< y+h) && (mousePressed== true) && (currentPage == 0))
+{
+image (imgS,0,0,width,height);
+currentPage = 19;
+}
+}
+
+void buttonT(int x, int y, int w, int h)
+{
+if((mouseX>x) && (mouseX< x+w) && (mouseY >y) && (mouseY< y+h) && (mousePressed== true) && (currentPage == 0))
+{
+image (imgT,0,0,width,height);
+currentPage = 20;
+}
+}
+
+void buttonU(int x, int y, int w, int h)
+{
+if((mouseX>x) && (mouseX< x+w) && (mouseY >y) && (mouseY< y+h) && (mousePressed== true) && (currentPage == 0))
+{
+image (imgU,0,0,width,height);
+currentPage = 21;
+}
+}
+
+void buttonV(int x, int y, int w, int h)
+{
+if((mouseX>x) && (mouseX< x+w) && (mouseY >y) && (mouseY< y+h) && (mousePressed== true) && (currentPage == 0))
+{
+image (imgV,0,0,width,height);
+currentPage = 22;
+}
+}
+
+void buttonW(int x, int y, int w, int h)
+{
+if((mouseX>x) && (mouseX< x+w) && (mouseY >y) && (mouseY< y+h) && (mousePressed== true) && (currentPage == 0))
+{
+image (imgW,0,0,width,height);
+currentPage = 23;
+}
+}
+
+void buttonX(int x, int y, int w, int h)
+{
+if((mouseX>x) && (mouseX< x+w) && (mouseY >y) && (mouseY< y+h) && (mousePressed== true) && (currentPage == 0))
+{
+image (imgX,0,0,width,height);
+currentPage = 24;
+}
+}
+
+void buttonY(int x, int y, int w, int h)
+{
+if((mouseX>x) && (mouseX< x+w) && (mouseY >y) && (mouseY< y+h) && (mousePressed== true) && (currentPage == 0))
+{
+image (imgY,0,0,width,height);
+currentPage = 25;
+}
+}
+
+void buttonZ(int x, int y, int w, int h)
+{
+if((mouseX>x) && (mouseX< x+w) && (mouseY >y) && (mouseY< y+h) && (mousePressed== true) && (currentPage == 0))
+{
+image (imgZ,0,0,width,height);
+currentPage = 26;
+}
+}
+
+
+void buttonMain(int x, int y, int w, int h)
+{
+if((mouseX>x) && (mouseX< x+w) && (mouseY >y) && (mouseY< y+h) && (mousePressed== true))
+{
+image (imgAll,0,0,width,height);
+currentPage = 0;
+}
+}
+
+
+///////////////////////////// new tab: lullaby
+
+
+
+void buttonLullaby(int x, int y, int w, int h)
+{
+if((mouseX>x) && (mouseX< x+w) && (mouseY >y) && (mouseY< y+h) && (mousePressed== true) && (currentPage == 0))
+{
+  //play lullaby song file using apwidgets 
+image (imgLullaby,0,0,width,height);
+  player.setMediaFile("Lullaby.mp3");
+                {
+                player.start();
+                }                
+currentPage = 27;
+
+//send bluetooth signal to arduino to dim light when dimmer used
+cp5 = new ControlP5(this);
+   //PFont p = createFont("Arial",18); 
+  cp5.setControlFont(fontMy,30);
+  cp5.setColorLabel(color(255,0,0));
+ cp5.addSlider("heart")
+     .setPosition(740,400)
+    // .setSize(255,400)
+    .setSize(50,600)
+     .setRange(0,255)
+    // .setColorValueLabel(color(255))
+     //.setColorCaptionLabel(color(255))
+     .setDecimalPrecision(2) 
+     .setValue(100)
+     .setColorActive(color(240,140,140))
+     .setLabelVisible(false) 
+     .setColorForeground(color(240,140,140))
+    .setColorBackground(color(255));
+     ;
+
+//text("Lullaby Sound Test",100,100,600,600);
+
+}
+}
+
+
+
+void buttonHeart(int x, int y, int w, int h)
+{
+if((mouseX>x) && (mouseX< x+w) && (mouseY >y) && (mouseY< y+h))
+{
+  byte sendheart = (byte) heart;
+
+byte[] send = { '\b', sendheart};
+bt.broadcast(send);
+}
+}
+
+
+/////////////////////////////////////New Tab: Play Sound 
+
+//buttons for each letter sound
+//buttons are all in the same location 
+//different pages designated in if statement determines which mp3 file to play
+
+void buttonSound(int x, int y, int w, int h)
+{
+    if((mouseX>x) && (mouseX< x+w) && (mouseY >y) && (mouseY< y+h) && (mousePressed== true) && (currentPage == 1))
+        {
+            player.setMediaFile("Alphabet - A.mp3");
+                {
+                player.start();
+                }
+        }
+     
+    if((mouseX>x) && (mouseX< x+w) && (mouseY >y) && (mouseY< y+h) && (mousePressed== true) && (currentPage == 2))
+        {
+        player.setMediaFile("Alphabet - B.mp3");
+                {
+                player.start();
+                }
+          
+          //text("B Sound Test",100,100,600,600);
+        }
+    
+    if((mouseX>x) && (mouseX< x+w) && (mouseY >y) && (mouseY< y+h) && (mousePressed== true) && (currentPage == 3))
+        {
+       player.setMediaFile("Alphabet - C.mp3");
+                {
+                player.start();
+                }
+          //  text("C Sound Test",100,100,600,600);
+        }
+        
+    if((mouseX>x) && (mouseX< x+w) && (mouseY >y) && (mouseY< y+h) && (mousePressed== true) && (currentPage == 4))
+        {
+        player.setMediaFile("Alphabet - D.mp3");
+                {
+                player.start();
+                }
+          // text("D Sound Test",100,100,600,600);
+        }
+  
+    if((mouseX>x) && (mouseX< x+w) && (mouseY >y) && (mouseY< y+h) && (mousePressed== true) && (currentPage == 5))
+        {
+        player.setMediaFile("Alphabet - E.mp3");
+                {
+                player.start();
+                }
+          // text("E Sound Test",100,100,600,600);
+        }
+
+    if((mouseX>x) && (mouseX< x+w) && (mouseY >y) && (mouseY< y+h) && (mousePressed== true) && (currentPage == 6))
+        {
+       player.setMediaFile("Alphabet - F.mp3");
+                {
+                player.start();
+                }
+          //  text("F Sound Test",100,100,600,600);
+        }
+        
+    if((mouseX>x) && (mouseX< x+w) && (mouseY >y) && (mouseY< y+h) && (mousePressed== true) && (currentPage == 7))
+        {
+       player.setMediaFile("Alphabet - G.mp3");
+                {
+                player.start();
+                }
+          //  text("G Sound Test",100,100,600,600);
+        }
+        
+    if((mouseX>x) && (mouseX< x+w) && (mouseY >y) && (mouseY< y+h) && (mousePressed== true) && (currentPage == 8))
+        {
+         player.setMediaFile("Alphabet - H.mp3");
+                {
+                player.start();
+                }
+          //text("H Sound Test",100,100,600,600);
+        }
+   
+    if((mouseX>x) && (mouseX< x+w) && (mouseY >y) && (mouseY< y+h) && (mousePressed== true) && (currentPage == 9))
+        {
+      player.setMediaFile("Alphabet - I.mp3");
+                {
+                player.start();
+                }
+          //   text("I Sound Test",100,100,600,600);
+        }
+        
+    if((mouseX>x) && (mouseX< x+w) && (mouseY >y) && (mouseY< y+h) && (mousePressed== true) && (currentPage == 10))
+        {
+        player.setMediaFile("Alphabet - J.mp3");
+                {
+                player.start();
+                }
+          // text("J Sound Test",100,100,600,600);
+        }
+
+    if((mouseX>x) && (mouseX< x+w) && (mouseY >y) && (mouseY< y+h) && (mousePressed== true) && (currentPage == 11))
+        {
+     
+           player.setMediaFile("Alphabet - K.mp3");
+                {
+                player.start();
+                }//   text("K Sound Test",100,100,600,600);
+        }
+        
+    if((mouseX>x) && (mouseX< x+w) && (mouseY >y) && (mouseY< y+h) && (mousePressed== true) && (currentPage == 12))
+        {
+          player.setMediaFile("Alphabet - L.mp3");
+                {
+                player.start();
+                } 
+          // text("L Sound Test",100,100,600,600);
+        }
+        
+    if((mouseX>x) && (mouseX< x+w) && (mouseY >y) && (mouseY< y+h) && (mousePressed== true) && (currentPage == 13))
+        {
+        player.setMediaFile("Alphabet - M.mp3");
+                {
+                player.start();
+                }
+          // text("M Sound Test",100,100,600,600);
+        }
+  
+    if((mouseX>x) && (mouseX< x+w) && (mouseY >y) && (mouseY< y+h) && (mousePressed== true) && (currentPage == 14))
+        {
+       player.setMediaFile("Alphabet - N.mp3");
+                {
+                player.start();
+                }
+          //  text("N Sound Test",100,100,600,600);
+        }
+        
+    if((mouseX>x) && (mouseX< x+w) && (mouseY >y) && (mouseY< y+h) && (mousePressed== true) && (currentPage == 15))
+        {
+       player.setMediaFile("Alphabet - O.mp3");
+                {
+                player.start();
+                }
+          //  text("O Sound Test",100,100,600,600);
+        }
+ 
+    if((mouseX>x) && (mouseX< x+w) && (mouseY >y) && (mouseY< y+h) && (mousePressed== true) && (currentPage == 16))
+        {
+        player.setMediaFile("Alphabet - P.mp3");
+                {
+                player.start();
+                }
+          // text("P Sound Test",100,100,600,600);
+        }
+
+   if((mouseX>x) && (mouseX< x+w) && (mouseY >y) && (mouseY< y+h) && (mousePressed== true) && (currentPage == 17))
+        {
+       player.setMediaFile("Alphabet - Q.mp3");
+                {
+                player.start();
+                }
+          //  text("Q Sound Test",100,100,600,600);
+        }
+
+   if((mouseX>x) && (mouseX< x+w) && (mouseY >y) && (mouseY< y+h) && (mousePressed== true) && (currentPage == 18))
+        {
+        player.setMediaFile("Alphabet - R.mp3");
+                {
+                player.start();
+                }
+          // text("R Sound Test",100,100,600,600);
+        }
+        
+   if((mouseX>x) && (mouseX< x+w) && (mouseY >y) && (mouseY< y+h) && (mousePressed== true) && (currentPage == 19))
+        {
+       player.setMediaFile("Alphabet - S.mp3");
+                {
+                player.start();
+                }
+          //  text("S Sound Test",100,100,600,600);
+        }
+ 
+   if((mouseX>x) && (mouseX< x+w) && (mouseY >y) && (mouseY< y+h) && (mousePressed== true) && (currentPage == 20))
+        {
+        
+           player.setMediaFile("Alphabet - T.mp3");
+                {
+                player.start();
+                }//text("T Sound Test",100,100,600,600);
+        }
+
+   if((mouseX>x) && (mouseX< x+w) && (mouseY >y) && (mouseY< y+h) && (mousePressed== true) && (currentPage == 21))
+        {
+      player.setMediaFile("Alphabet - U.mp3");
+                {
+                player.start();
+                }
+          //   text("U Sound Test",100,100,600,600);
+        }
+        
+   if((mouseX>x) && (mouseX< x+w) && (mouseY >y) && (mouseY< y+h) && (mousePressed== true) && (currentPage == 22))
+        {
+      player.setMediaFile("Alphabet - V.mp3");
+                {
+                player.start();
+                }
+          //   text("V Sound Test",100,100,600,600);
+        }
+  
+  if((mouseX>x) && (mouseX< x+w) && (mouseY >y) && (mouseY< y+h) && (mousePressed== true) && (currentPage == 23))
+        {
+        player.setMediaFile("Alphabet - W.mp3");
+                {
+                player.start();
+                }
+          // text("W Sound Test",100,100,600,600);
+        }
+
+  if((mouseX>x) && (mouseX< x+w) && (mouseY >y) && (mouseY< y+h) && (mousePressed== true) && (currentPage == 24))
+        {
+       player.setMediaFile("Alphabet - X.mp3");
+                {
+                player.start();
+                }
+          text("X Sound Test",100,100,600,600);
+        }
+
+  if((mouseX>x) && (mouseX< x+w) && (mouseY >y) && (mouseY< y+h) && (mousePressed== true) && (currentPage == 25))
+        {
+           player.setMediaFile("Alphabet - Y.mp3");
+                {
+                player.start();
+                }
+      //  text("Y Sound Test",100,100,600,600);
+        }
+ 
+  if((mouseX>x) && (mouseX< x+w) && (mouseY >y) && (mouseY< y+h) && (mousePressed== true) && (currentPage == 26))
+        {
+         player.setMediaFile("Alphabet - Z.mp3");
+                {
+                player.start();
+                }
+          //text("Z Sound Test",100,100,600,600);
+        }
+
+}
+
+
+
+
+
